@@ -27,10 +27,14 @@ callPackage ./common.nix { inherit stdenv; } {
 
       export NIX_DONT_SET_RPATH=1
       unset CFLAGS
-
-      # Apparently --bindir is not respected.
-      makeFlagsArray+=("bindir=$bin/bin" "sbindir=$bin/sbin" "rootsbindir=$bin/sbin")
     '';
+
+    # Apparently --bindir is not respected.
+    makeFlags = [
+      "bindir=${placeholder "bin"}/bin"
+      "sbindir=${placeholder "bin"}/sbin"
+      "rootsbindir=${placeholder "bin"}/sbin"
+    ];
 
     # The stackprotector and fortify hardening flags are autodetected by glibc
     # and enabled by default if supported. Setting it for every gcc invocation
@@ -137,6 +141,8 @@ callPackage ./common.nix { inherit stdenv; } {
       cp $bin/bin/getconf $bin/bin/getconf_
       mv $bin/bin/getconf_ $bin/bin/getconf
     '';
+
+    doInstallCheck = true;
 
     separateDebugInfo = true;
 
